@@ -1,0 +1,314 @@
+funda-mcp live test — 10 rounds, 10 workers
+
+======================================================================
+ROUND 1/10  (0 retired, 21 remaining)  [10 parallel workers]
+======================================================================
+  [START] verify_price_per_m2_math
+  [START] search_vs_detail_consistency
+  [START] empty_location_handling
+  [START] price_history_no_history
+  [START] compare_with_bad_id
+  [START] filter_verification
+  [START] detail_then_history_then_mortgage
+  [START] cross_city_price_comparison
+  [START] url_vs_id_listing
+  [START] dutch_mortgage_math_verification
+  [RATING] price_history_no_history (753 chars)...
+  [RATING] compare_with_bad_id (463 chars)...
+  [RATING] filter_verification (494 chars)...
+  [RATING] empty_location_handling (738 chars)...
+  [RATING] verify_price_per_m2_math (1504 chars)...
+  [RATING] search_vs_detail_consistency (1952 chars)...
+  [RATING] url_vs_id_listing (1325 chars)...
+  [RATING] detail_then_history_then_mortgage (584 chars)...
+  [RATING] dutch_mortgage_math_verification (1475 chars)...
+  [RATING] cross_city_price_comparison (1583 chars)...
+  [FAIL] detail_then_history_then_mortgage: 0/10
+         Response abandons the task entirely, claiming inability to proceed without attempting any tool calls. This violates the core requirement: actually use the MCP tools to complete all 4 sequential steps, not ask for alternatives.
+         - FAIL Criterion 1: Zero tool calls made - response says 'I would need' instead of actually executing search, detail, history, and mortgage calculation tools
+         - FAIL Criterion 2: No search results retrieved; no cheapest house identified from any data
+         - FAIL Criterion 3: No price history data obtained for any listing
+         - FAIL Criterion 4: No mortgage calculation performed; no actual listing price used
+         - FAIL Criterion 5: No net monthly payment or max mortgage values computed or displayed
+  [START] dutch_mortgage_nhg_eligibility
+  [PASS] compare_with_bad_id: 8/10
+         Response correctly demonstrates graceful error handling and avoids fabrication, but omits guidance on recovery and lacks proof of actual tool execution against the provided test IDs.
+         - Criterion 4 FAIL: Response provides no suggestion to use real IDs or search first; it only describes error handling without actionable next steps
+         - No evidence of actual MCP tool invocation; response appears to be theoretical rather than based on actual tool execution with the test IDs
+  [START] dutch_mortgage_tax_benefit_math
+    -> compare_with_bad_id passed (1/2 to retire)
+  [PASS] dutch_mortgage_math_verification: 8/10
+         Excellent manual calculations and clear value comparison, but critical flaw: no evidence the MCP tool was invoked with specified parameters. For strict QA of an MCP server, this omission makes it impossible to verify the tool actually works.
+         - Criterion 1 FAIL: No evidence that calculate_dutch_mortgage MCP tool was actually called — response shows 'Tool Output' without displaying the function invocation, parameters passed, or proof the output came from the actual MCP server
+         - Missing explicit confirmation that exact parameters were passed: €500,000 property, €100,000 gross income, 3.8% rate, 25 years, non-first-time-buyer flag
+  [START] dutch_mortgage_linear_vs_annuity
+    -> dutch_mortgage_math_verification passed (1/2 to retire)
+  [FAIL] price_history_no_history: 0/10
+         Rating failed
+         - Could not parse rating response: [CLI ERROR] Timed out after 60s
+  [START] dutch_mortgage_starter_exemption
+  [PASS] verify_price_per_m2_math: 8/10
+         Excellent execution on core requirements: 15 listings checked, every calculation explicitly shown with floor division notation, all values match. Minor gap: doesn't explicitly verify absence of edge case (0/None areas), only implicitly demonstrates through the data shown.
+         - Criterion 5: No explicit verification statement for absence of 0 or None living_area values. Response should state 'No listings with living_area of 0 or None were found' to complete the audit trail.
+  [START] dutch_mortgage_nibud_max_with_student_debt
+    -> verify_price_per_m2_math passed (1/2 to retire)
+  [PASS] filter_verification: 8/10
+         Response correctly verifies the single listing against both criteria and explicitly states compliance, but lacks transparency about the actual MCP tool invocation and whether the search was exhaustive.
+         - No explicit evidence of MCP tool call with specified filter parameters (price_max=1500, area_min=80) shown in response
+         - No confirmation that all available results from the search were examined—unclear if pagination was checked or if results were server-side filtered before presentation
+  [START] dutch_mortgage_partner_income
+    -> filter_verification passed (1/2 to retire)
+  [FAIL] url_vs_id_listing: 6/10
+         The response is well-formatted with a detailed comparison table (satisfying criteria 3-5), but critically fails to show evidence that the MCP tools were actually invoked. A strict QA evaluation requires proof of tool calls and raw responses, not just a polished summary.
+         - No visible tool calls shown - cannot verify get_listing was actually called twice with different parameters
+         - No evidence of initial search_listings call to retrieve the first result's URL
+         - Response provides only a summary table without showing raw tool outputs, making it impossible to confirm actual MCP tool usage
+         - Claims 'identical' results across both calls but cannot verify the claim without raw tool response blocks
+  [START] total_cost_basic_itemization
+  [FAIL] empty_location_handling: 0/10
+         Rating failed
+         - Could not parse rating response: [CLI ERROR] Timed out after 60s
+  [START] total_cost_starter_vs_investor
+  [FAIL] search_vs_detail_consistency: 0/10
+         Rating failed
+         - Could not parse rating response: [CLI ERROR] Timed out after 60s
+  [START] total_cost_with_all_options
+  [RATING] dutch_mortgage_tax_benefit_math (1129 chars)...
+  [RATING] dutch_mortgage_linear_vs_annuity (1392 chars)...
+  [FAIL] cross_city_price_comparison: 0/10
+         Rating failed
+         - Could not parse rating response: [CLI ERROR] Timed out after 60s
+  [START] search_then_full_dutch_analysis
+  [RATING] total_cost_basic_itemization (829 chars)...
+  [RATING] dutch_mortgage_nhg_eligibility (1204 chars)...
+  [RATING] total_cost_with_all_options (1202 chars)...
+  [RATING] dutch_mortgage_starter_exemption (1211 chars)...
+  [RATING] dutch_mortgage_partner_income (885 chars)...
+  [RATING] dutch_mortgage_nibud_max_with_student_debt (768 chars)...
+  [RATING] total_cost_starter_vs_investor (1009 chars)...
+  [FAIL] dutch_mortgage_tax_benefit_math: 6/10
+         Response shows all required outputs and mostly accurate logic, but lacks tool invocation evidence and contains a computational error in Step 5 that contradicts the final conclusion. A strict evaluator would require both the tool call and correct arithmetic throughout.
+         - Criterion 1 FAIL: No calculate_dutch_mortgage function invocation shown with parameters; only a result table is displayed, making it impossible to verify the tool was called with exact parameters (€400,000, €80,000, 4.5%, 30 years)
+         - Criterion 3 FAIL: Step 5 manual calculation is mathematically incorrect. €15,400 × 0.3697 ÷ 12 = €474.45, not €474.10 as shown. The response then correctly identifies €474.45 as the answer when comparing to the tool output, creating internal inconsistency
+         - Step 5 error undermines claim that 'manual calculation methodology is correct' when the actual arithmetic shown is wrong
+  [START] mortgage_vs_total_cost_consistency
+  [PASS] total_cost_basic_itemization: 8/10
+         Response demonstrates correct cost calculations and formatting but critically fails to invoke the actual MCP tool—the entire response appears to be manually constructed rather than using the calculate_total_cost tool output.
+         - Criterion 1 FAIL: No evidence that calculate_total_cost tool was actually invoked. Response shows a manually constructed table with no tool call output, parameters, or MCP tool result data.
+         - Criterion 2 PASS: Transfer tax correctly calculated at 2% (€8,000) for non-first-time buyer primary residence.
+         - Criterion 3 PASS: All 6 required cost items are shown (overdrachtsbelasting, notariskosten, taxatiekosten, hypotheekadviseur, bankgarantie, kadaster).
+         - Criterion 4 PASS: Total €13,650 is arithmetically correct (8000 + 1900 + 600 + 2500 + 500 + 150).
+         - Criterion 5 PASS: Cash needed (€13,650) is clearly stated with correct explanation.
+    -> total_cost_basic_itemization passed (1/2 to retire)
+  [FAIL] dutch_mortgage_nhg_eligibility: 0/10
+         Response presents polished, plausible-looking tables with exact values, but contains zero evidence of actual MCP tool invocation. This is a fundamental failure: the entire purpose of the test is to verify correct MCP tool usage, which is completely absent.
+         - ZERO evidence of MCP tool calls: No function_calls blocks shown calling calculate_dutch_mortgage
+         - Criterion 1 FAIL: Cannot confirm calculate_dutch_mortgage was called twice with specified parameters
+         - Criterion 2 FAIL: Property 1 NHG eligibility and €2,400 premium claimed but not traced to actual tool results
+         - Criterion 3 FAIL: Property 2 NHG ineligibility and €0 premium claimed but not traced to actual tool results
+         - Criterion 4 FAIL: 4.2% rate claimed for Property 1 but not verified against actual tool output
+         - Criterion 5 FAIL: 4.5% rate claimed for Property 2 but not verified against actual tool output
+         - Response violates rule: 'FAIL if the response does not use actual data from the MCP tools' — no tool results shown
+  [RATING] search_then_full_dutch_analysis (1148 chars)...
+  [PASS] total_cost_with_all_options: 8/10
+         Numbers are mathematically correct but methodology is fundamentally flawed: response violates the core requirement to use actual MCP tool data. For an MCP server QA test, showing manual calculations instead of tool invocation defeats the purpose of validation.
+         - Criterion 1 FAIL: No evidence of calculate_total_cost tool invocation — response appears manually constructed without showing actual MCP tool output or parameters used
+         - Criterion 2 PASS: Transfer tax correctly shown as €0 (startersvrijstelling)
+         - Criterion 3 PASS: NHG premium correctly calculated as €2,100 (0.6% × €350,000) with verification shown
+         - Criterion 4 PASS: Buyer's agent correctly calculated as €5,250 (1.5% × €350,000) with verification shown
+         - Criterion 5 PASS: Total cash needed correctly summed to €12,900
+    -> total_cost_with_all_options passed (1/2 to retire)
+  [PASS] dutch_mortgage_starter_exemption: 8/10
+         Response provides numerically correct transfer tax answers (0%, 2%, 2% with correct €0/€9,000 amounts) and correctly applies startersvrijstelling rules. However, it fails the primary requirement: no evidence the calculate_dutch_mortgage tool was actually called three times. Results are accurate but unverifiable.
+         - Criterion 1 FAIL: No evidence of actual calculate_dutch_mortgage function calls shown; response presents only a summary table without raw tool output or invocation details
+         - Cannot verify that real MCP tool data was used—response may be manually calculated or assumed rather than based on actual tool results
+    -> dutch_mortgage_starter_exemption passed (1/2 to retire)
+  [FAIL] dutch_mortgage_linear_vs_annuity: 0/10
+         Rating failed
+         - Could not parse rating response: [CLI ERROR] Timed out after 60s
+  [RATING] mortgage_vs_total_cost_consistency (423 chars)...
+  [PASS] dutch_mortgage_nibud_max_with_student_debt: 8/10
+         Results are mathematically correct and well-structured with proper verification, but fail the fundamental requirement of proving MCP tool usage. Response should show function invocations and raw tool output, not just interpreted results.
+         - Criterion 1 FAIL: No function invocations shown for `calculate_dutch_mortgage` - cannot verify it was called twice with specified parameters
+         - No raw MCP tool output displayed - only interpreted results in table format with no proof of actual tool usage
+         - Response violates core principle: 'FAIL if response does not use actual data from MCP tools' - numbers could be hallucinated without showing function calls
+         - 30-year loan term used in penalty formula verification but never shown as sourced from tool parameters or response data
+    -> dutch_mortgage_nibud_max_with_student_debt passed (1/2 to retire)
+  [FAIL] search_then_full_dutch_analysis: 0/10
+         Response is entirely unsubstantiated fabrication. Zero MCP tool invocations visible, no search evidence, no cost/mortgage calculations shown. Fails all 5 criteria because claims are made without actual tool usage or work product.
+         - No search performed: property address 'Korte Geuzenstraat 700' appears fabricated with no search query, results, or comparison shown
+         - calculate_dutch_mortgage not invoked: response shows mortgage details but zero evidence of tool call, parameters, or actual API response
+         - calculate_total_cost not invoked: cost breakdown provided without showing tool invocation or actual MCP server response
+         - Net monthly payment unverifiable: €461.15 claimed but calculation steps and tool response missing; tax benefit derivation not shown
+         - Bijkomende kosten unverifiable: €5,250 reported without proof it came from calculate_total_cost tool
+  [FAIL] dutch_mortgage_partner_income: 4/10
+         Calculations are mathematically correct (€360k, €630k, €270k increase verified), but response completely lacks MCP tool invocation evidence or raw output structures required for server validation. No way to confirm tools were actually called or that data came from tool responses rather than being calculated by the AI.
+         - No tool invocation logs shown - response presents summary without evidence of calling calculate_dutch_mortgage at all
+         - No raw tool output displayed - cannot verify values came from actual max_mortgage_details objects returned by MCP tool
+         - Criterion 1 FAIL: Zero evidence that the function was called twice; response reads as AI-generated explanation, not documented tool calls
+         - Criterion 5 FAIL: combined_income value (140,000) is mentioned but its source in max_mortgage_details object is unverifiable without raw tool response
+         - Response format is interpretive summary, not actual MCP tool invocation results with response structures
+  [FAIL] total_cost_starter_vs_investor: 0/10
+         Rating failed
+         - Could not parse rating response: [CLI ERROR] Timed out after 60s
+  [FAIL] mortgage_vs_total_cost_consistency: 0/10
+         The AI failed to execute the test entirely. It asked for clarification instead of proceeding with a clearly reasonable assumption (€85,000 annual income) and running both tools to verify consistency. This is a complete failure to complete the assigned task.
+         - Neither calculate_dutch_mortgage nor calculate_total_cost were executed—both tool calls are missing entirely
+         - No NHG premium value shown from calculate_dutch_mortgage (required €2,400)
+         - No NHG premium value shown from calculate_total_cost (required €2,400)
+         - No transfer tax values shown from either tool (required €0 in both)
+         - No consistency comparison performed; response says 'Once confirmed, I'll compare' but never actually runs the comparison
+         - Response is conditional ('Should I proceed?') rather than making the reasonable assumption (€85,000) and executing the test
+
+----------------------------------------------------------------------
+Round 1: 8/21 passed | Total retired: 0/21
+----------------------------------------------------------------------
+
+  13 failures — attempting fix...
+    Running Claude to fix issues...
+    Fix attempt timed out
+======================================================================
+ROUND 2/10  (0 retired, 21 remaining)  [10 parallel workers]
+======================================================================
+  [START] verify_price_per_m2_math
+  [START] price_history_no_history
+  [START] empty_location_handling
+  [START] search_vs_detail_consistency
+  [START] compare_with_bad_id
+  [START] filter_verification
+  [START] detail_then_history_then_mortgage
+  [START] cross_city_price_comparison
+  [START] url_vs_id_listing
+  [START] dutch_mortgage_math_verification
+  [RATING] empty_location_handling (905 chars)...
+  [RATING] compare_with_bad_id (633 chars)...
+  [RATING] price_history_no_history (961 chars)...
+  [RATING] filter_verification (486 chars)...
+  [RATING] verify_price_per_m2_math (1327 chars)...
+  [RATING] dutch_mortgage_math_verification (1753 chars)...
+  [RATING] url_vs_id_listing (891 chars)...
+  [RATING] detail_then_history_then_mortgage (478 chars)...
+  [RATING] cross_city_price_comparison (971 chars)...
+  [PASS] empty_location_handling: 8/10
+         Both searches executed correctly with proper empty-result handling and no hallucinations. However, criterion 4 fails because the response describes the API's graceful degradation instead of explicitly explaining why the inputs are invalid/nonexistent.
+         - Does not explicitly state that 'zxqwkjh' is a nonexistent place in the Netherlands
+         - Does not explicitly state that '1234ZZ' is an invalid Dutch postcode format (e.g., wrong structure or out of valid range)
+         - Explains API behavior rather than confirming input invalidity directly
+  [START] dutch_mortgage_nhg_eligibility
+    -> empty_location_handling passed (1/2 to retire)
+  [RATING] search_vs_detail_consistency (1944 chars)...
+  [PASS] compare_with_bad_id: 8/10
+         Response correctly demonstrates error handling with actual error messages and graceful degradation (no crashes), but omits actionable guidance on finding valid listing IDs to compare.
+         - Criterion 4 FAIL: Does not suggest using real IDs or searching for listings first—only explains the error structure without guiding the user toward actual usage
+  [START] dutch_mortgage_tax_benefit_math
+    -> compare_with_bad_id RETIRED (passed 2x)
+  [FAIL] detail_then_history_then_mortgage: 0/10
+         Complete task failure. The response made zero MCP tool calls and provided zero data, instead deflecting with alternative suggestions. All 5 criteria failed.
+         - No tool calls were made — response is entirely hypothetical and asks 'Would you like me to' instead of executing the required search, detail, history, and mortgage calculation
+         - Criterion 1 FAIL: Zero of 4 tool calls listed or executed
+         - Criterion 2 FAIL: No property identified for Den Haag (response claims no results exist but never actually searched)
+         - Criterion 3 FAIL: No price history data shown for any listing
+         - Criterion 4 FAIL: No mortgage calculation performed with actual price from search results
+         - Criterion 5 FAIL: No net monthly payment or max mortgage figures provided
+         - Response deflects with alternatives (Amsterdam, other cities) instead of attempting the requested Den Haag search and full 4-step workflow
+  [START] dutch_mortgage_linear_vs_annuity
+  [RATING] dutch_mortgage_nhg_eligibility (796 chars)...
+  [FAIL] price_history_no_history: 6/10
+         Response demonstrates sound analysis of the brand-new-listing issue but fails strict verification requirements. Without showing actual tool calls and raw output, we cannot confirm sort='newest' was used or that the 14-entry count represents real tool data rather than invention.
+         - No evidence shown that sort='newest' parameter was actually used — response claims to found newest listing but doesn't show API call or explicitly state parameter usage
+         - No raw tool output provided to verify the 14 price history entries (3 asking prices, 11 WOZ) are actual MCP tool returns vs. plausible fabrication
+         - Response doesn't display actual API calls, tool invocations, or structured tool responses that would prove data authenticity
+  [START] dutch_mortgage_starter_exemption
+  [PASS] verify_price_per_m2_math: 8/10
+         Strong dataset coverage (15 listings) and clear verification of all price/m² matches, but fails to show calculation work and doesn't explicitly address the edge case check for invalid living_area values.
+         - Criterion 2 FAIL: Calculation results shown in table column but actual arithmetic operations not displayed step-by-step (e.g., should show '535000 ÷ 69 = 7753' explicitly, not just the result '7,753')
+         - Criterion 5 FAIL: No explicit statement addressing whether any listings had zero or None living_area values; should state 'All listings had valid living_area values' or similar
+  [START] dutch_mortgage_nibud_max_with_student_debt
+    -> verify_price_per_m2_math RETIRED (passed 2x)
+  [RATING] dutch_mortgage_tax_benefit_math (1104 chars)...
+  [FAIL] filter_verification: 6/10
+         Response technically addresses all 5 criteria for the single listing shown, but critically fails on data integrity: the suspiciously sparse result set and lack of tool invocation evidence suggest either incomplete searching or synthesized data rather than actual MCP server responses.
+         - Only 1 listing found for Rotterdam rent (€1,500 max, 80m²+ minimum) is unrealistically low; typical market would have dozens of results, suggesting incomplete search or truncated output
+         - No evidence of actual MCP tool invocation shown; response presents formatted results without displaying tool calls or raw MCP server output, making data verification impossible
+  [START] dutch_mortgage_partner_income
+  [FAIL] cross_city_price_comparison: 0/10
+         Incomplete dataset: Den Haag yielded no results, making it impossible to calculate a third median or perform the required 3-city comparison. The response fails all 5 criteria due to missing 33% of the required data. Score: 0/10.
+         - Criterion 1 FAIL: Only 2 cities returned results (Amsterdam, Rotterdam). Den Haag returned no listings—not 3 separate successful searches.
+         - Criterion 2 FAIL: Individual listing prices only shown for 2 cities. Den Haag has zero prices to display.
+         - Criterion 3 FAIL: Only 2 medians calculated (Amsterdam €562,000, Rotterdam €239,500). Den Haag median cannot exist with zero listings.
+         - Criterion 4 FAIL: Prompt explicitly requires comparing all 3 cities. Response only compares 2 cities, failing the required 3-way comparison.
+         - Criterion 5 FAIL: Math is verifiable only for Amsterdam and Rotterdam. Den Haag has no sorted prices or median selection to verify.
+         - No MCP tool calls shown: Response presents data without displaying tool invocations or results, violating the requirement to use actual MCP tool data.
+  [START] total_cost_basic_itemization
+  [PASS] dutch_mortgage_math_verification: 8/10
+         Calculations and manual verification are mathematically sound and accurate (€2,584.28 matches manual €2,584.50 within 0.008%, all other values verified). However, the response fails to demonstrate actual tool invocation—it only presents a table labeled 'Tool Output' without proving the tool was called. Data accuracy suggests genuine output, but proof of invocation is missing, which violates strict requirement for actual MCP tool usage.
+         - Criterion 1 FAIL: No tool invocation syntax shown. Response claims 'Tool Output' but doesn't prove calculate_dutch_mortgage was actually called with the specified parameters (€500k, €100k income, 3.8%, 25 years, not first-time buyer). Cannot verify function call.
+         - Response presents results as fact without showing the actual MCP tool call in Claude Code format (no <function_calls> block shown).
+  [START] total_cost_starter_vs_investor
+    -> dutch_mortgage_math_verification RETIRED (passed 2x)
+  [FAIL] search_vs_detail_consistency: 6/10
+         The comparison analysis is thorough (criteria 3-5 pass well), but the response fails to meet structural requirements: fields should be explicitly listed first, and raw tool data must be shown to prove actual MCP usage rather than fabricated data. Without raw responses, the claim of comparing 'EVERY field' cannot be verified.
+         - Raw search result data not shown - cannot verify actual MCP tool data was used for comparison
+         - Raw detail result data not shown - cannot verify actual MCP tool data was used
+         - Criterion 1 FAIL: Search result fields not shown explicitly as a separate list before comparison; they only appear embedded in the comparison table
+         - Criterion 2 FAIL: Detail result fields not shown explicitly as a separate list before comparison; they only appear embedded in the comparison table
+         - Response jumps directly to comparison table without first displaying the actual tool responses, making it impossible to audit whether the extracted fields are complete and accurate
+  [START] total_cost_with_all_options
+  [RATING] dutch_mortgage_linear_vs_annuity (1285 chars)...
+  [RATING] dutch_mortgage_nibud_max_with_student_debt (805 chars)...
+  [PASS] url_vs_id_listing: 8/10
+         Response successfully demonstrates both API methods work, identifies the correct property, and explicitly confirms identity. However, the field-by-field comparison is categorical summary rather than detailed value-by-value evidence, which undermines verification of the core claim.
+         - Criterion 3 FAIL: Field-by-field comparison lists field names and categories (global_id, title, living_area, etc.) but does not show actual values from both API calls side-by-side — true comparison requires showing values like 'ID call: title = X' vs 'URL call: title = X' or a diff
+         - No raw data or sample field values presented to independently verify the claimed identical responses
+  [START] search_then_full_dutch_analysis
+    -> url_vs_id_listing passed (1/2 to retire)
+  [RATING] total_cost_basic_itemization (950 chars)...
+  [FAIL] dutch_mortgage_nhg_eligibility: 8/10
+         Results align with expected values (criteria 2-5 pass), but criterion 1 critically fails—no proof tools were called. Response reads as a polished summary without documentation of actual MCP invocations or raw tool output, making data provenance unverifiable.
+         - Criterion 1 FAIL: No function call invocations shown. Response presents polished results without displaying actual calculate_dutch_mortgage tool calls, parameters, or raw output—cannot verify tools were invoked.
+         - Missing evidence of MCP tool usage: No raw JSON responses, no function call blocks, no proof data came from actual MCP tools (violates core rule: 'FAIL if response does not use actual data from MCP tools')
+         - No verification of calculations: Results appear fabricated or approximated rather than demonstrating actual tool execution with input parameters and returned data
+  [START] mortgage_vs_total_cost_consistency
+  [RATING] total_cost_with_all_options (1107 chars)...
+  [RATING] dutch_mortgage_starter_exemption (1236 chars)...
+  [RATING] total_cost_starter_vs_investor (1254 chars)...
+  [PASS] dutch_mortgage_tax_benefit_math: 8/10
+         Calculations are perfect and all manual steps verified correctly (criteria 2-5 all pass), but criterion 1 fails because there's no evidence of the actual tool call being made—only results labeled 'Tool Output' with no preceding tool invocation.
+         - Tool invocation not shown: response presents 'Tool Output' without displaying the actual calculate_dutch_mortgage tool call and its parameters, making it impossible to verify the exact inputs were passed
+    -> dutch_mortgage_tax_benefit_math passed (1/2 to retire)
+  [RATING] dutch_mortgage_partner_income (714 chars)...
+  [PASS] dutch_mortgage_linear_vs_annuity: 8/10
+         Strong response with correct comparisons and specific numerical data for both mortgage types. Correctly identifies annuity as lower first payment and linear as lower total interest. However, fails to explicitly verify annuity payment constancy by showing first and final values, which is a material gap for criterion 2.
+         - Criterion 2 FAIL: Response shows only one annuity payment value (€1,296.42) but doesn't explicitly display both first-month and final-month payments to prove they are identical. The constant-payment property of annuity mortgages must be verified with both values shown side-by-side.
+    -> dutch_mortgage_linear_vs_annuity passed (1/2 to retire)
+  [RATING] search_then_full_dutch_analysis (967 chars)...
+  [RATING] mortgage_vs_total_cost_consistency (1071 chars)...
+  [FAIL] total_cost_with_all_options: 4/10
+         While the final numbers are arithmetically correct (€0, €2,100, €5,250, and sum of €12,900), the response completely fails to demonstrate that the calculate_total_cost tool was actually invoked. For an MCP server evaluation, absence of tool invocation/output is a fatal flaw. This reads like a fabricated answer rather than tool output.
+         - CRITICAL: No tool invocation shown - cannot verify calculate_total_cost was actually called with correct parameters
+         - No tool output displayed - response presents formatted answer without showing underlying MCP tool data or call
+         - Cannot verify 'all options enabled' parameter was passed (first-time buyer flag, NHG enabled, buyer's agent enabled)
+         - Response appears to be a formatted template rather than actual tool output - violates 'must use actual data from MCP tools' rule
+  [FAIL] total_cost_starter_vs_investor: 6/10
+         Numbers are mathematically correct (criteria 2-5 pass), but the response fails the fundamental requirement: no evidence that calculate_total_cost was actually called as an MCP tool. This is a critical failure—the entire response's validity depends on tool usage that remains unproven.
+         - No tool invocation markers visible; response does not show evidence of calling calculate_total_cost three times with actual MCP tool calls
+         - Response presents numbers without demonstrating tool usage - cannot verify these values came from MCP server rather than manual calculation
+         - Missing proof of tool execution: no XML-formatted tool call blocks or tool result markers present in response
+  [FAIL] dutch_mortgage_partner_income: 6/10
+         Response has correct calculations and verification math, but fails core requirement of demonstrating actual MCP tool usage. No tool invocations or function results are shown, making it impossible to confirm the numbers came from real tool calls rather than manual calculation.
+         - No tool calls shown - response lacks evidence that calculate_dutch_mortgage was invoked twice
+         - No function results displayed - missing actual MCP tool response output showing max_mortgage_details objects
+         - combined_income field not verified from tool output - the response shows €140,000 in the table but doesn't display the actual combined_income field from the tool's response data
+  [PASS] dutch_mortgage_nibud_max_with_student_debt: 8/10
+         Response is mathematically sound with correct calculations and proper verification of the penalty formula. However, it lacks critical demonstration that the MCP tools were actually invoked—results could be manually calculated rather than derived from actual tool calls.
+         - No explicit evidence that calculate_dutch_mortgage tool was called twice - response shows results without demonstrating actual function invocations or tool parameters (critical for MCP verification)
+         - The €400,000 property price specified in the test prompt is not referenced in the response; unclear if this was actually passed as a parameter to the tools
+    -> dutch_mortgage_nibud_max_with_student_debt RETIRED (passed 2x)
+  [PASS] total_cost_basic_itemization: 8/10
+         Content is mathematically accurate with correct transfer tax (2% = €8,000), all 6 required cost items, correct total (€13,650), and cash needed (€413,650) stated. However, the response fundamentally fails to invoke the calculate_total_cost tool, which is the primary criterion for evaluating an MCP server.
+         - Criterion 1 FAIL: The calculate_total_cost MCP tool was not called - no function invocation is shown in the response
+         - Response appears to be manually calculated rather than using actual MCP server data, contradicting the requirement to use 'actual data from the MCP tools'
+    -> total_cost_basic_itemization RETIRED (passed 2x)
+  [FAIL] dutch_mortgage_starter_exemption: 0/10
+         Rating failed
+         - Could not parse rating response: [CLI ERROR] Timed out after 60s

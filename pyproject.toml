@@ -1,0 +1,28 @@
+[project]
+name = "makelaar-mcp"
+version = "0.1.0"
+description = "Your AI makelaar — MCP server for Dutch house hunting on funda.nl"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp[cli]>=1.0",
+    "pyfunda",
+]
+
+[project.scripts]
+makelaar-mcp = "makelaar_mcp.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/makelaar_mcp"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

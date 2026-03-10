@@ -37,7 +37,17 @@ uv run mcp dev src/makelaar_mcp/server.py
 
 ---
 
-## Claude Desktop integration
+## Integration
+
+### Claude Code (CLI)
+
+```bash
+claude mcp add makelaar -- uvx makelaar-mcp
+```
+
+That's it. The MCP server is now available in all your Claude Code sessions.
+
+### Claude Desktop
 
 Add the following to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
@@ -45,8 +55,8 @@ Add the following to `~/Library/Application Support/Claude/claude_desktop_config
 {
   "mcpServers": {
     "makelaar": {
-      "command": "uv",
-      "args": ["run", "--directory", "/path/to/makelaar-mcp", "makelaar-mcp"]
+      "command": "uvx",
+      "args": ["makelaar-mcp"]
     }
   }
 }

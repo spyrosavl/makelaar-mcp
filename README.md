@@ -46,11 +46,11 @@ No other setup needed — `uvx` handles everything automatically.
 
 > I earn €80,000/year, my partner earns €50,000. Can we afford this €500,000 house? We're first-time buyers, both 29. Include NHG.
 
-> Compare these two listings: 11111111 and 22222222
+> Compare these two listings: https://www.funda.nl/detail/koop/amsterdam/appartement-rapenburgerstraat-103-f/43363178/ and https://www.funda.nl/detail/koop/amsterdam/huis-arendonksingel-54/43363912/
 
 > What are the total buying costs for a €350,000 apartment? I'm a starter, age 27.
 
-> Show me the price history for this listing: https://www.funda.nl/detail/koop/amsterdam/huis-12345678/
+> Show me the price history for this listing: https://www.funda.nl/detail/koop/amsterdam/huis-arendonksingel-54/43363912/
 
 ---
 

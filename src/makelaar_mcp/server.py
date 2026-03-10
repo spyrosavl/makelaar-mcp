@@ -492,6 +492,7 @@ def calculate_dutch_mortgage(
                 ),
                 "max_borrowable": max_mortgage,
             },
+            "disclaimer": "Approximation for informational purposes only — not financial advice. Consult a licensed hypotheekadviseur.",
         }
 
         if mortgage_type == "linear":
@@ -634,6 +635,7 @@ def calculate_total_cost(
             "total_including_purchase": purchase_price + total_additional,
             "cash_needed": total_additional,
             "note": "You can borrow up to 100% of the property value, but these additional costs must come from your own savings.",
+            "disclaimer": "Approximation for informational purposes only — not financial advice. Consult a licensed hypotheekadviseur.",
         }
     except Exception as exc:
         return {"error": str(exc)}

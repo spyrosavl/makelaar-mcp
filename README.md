@@ -100,6 +100,16 @@ These costs must come from savings — you can't borrow them.
 
 ---
 
+## Disclaimer
+
+This project is **not affiliated with, endorsed by, or connected to funda.nl** or Funda B.V. Property data is sourced from third-party services and may be incomplete or outdated.
+
+Mortgage calculations and cost estimates are **approximations for informational purposes only — not financial advice**. Dutch mortgage rules, tax rates, and NHG limits change annually. Always consult a licensed mortgage advisor (*hypotheekadviseur*) before making financial decisions.
+
+See [LICENSE](LICENSE) for the full MIT license.
+
+---
+
 ## Development
 
 ```bash

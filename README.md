@@ -110,6 +110,12 @@ See [LICENSE](LICENSE) for the full MIT license.
 
 ---
 
+## Acknowledgements
+
+Built on [pyfunda](https://github.com/0xMH/pyfunda) by [0xMH](https://github.com/0xMH) — the Python library that makes funda.nl data accessible.
+
+---
+
 ## Development
 
 ```bash

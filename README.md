@@ -7,6 +7,12 @@ Your AI makelaar (real estate agent) for the Dutch housing market. Search [funda
 
 ## Quick start
 
+**Prerequisites:** Install [uv](https://docs.astral.sh/uv/) (Python package runner) if you don't have it:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
 ### Claude Code
 
 ```bash
@@ -29,6 +35,8 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ```
 
 Then restart Claude Desktop.
+
+No other setup needed — `uvx` handles everything automatically.
 
 ---
 

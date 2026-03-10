@@ -1,6 +1,6 @@
 [project]
 name = "makelaar-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "Your AI makelaar — MCP server for Dutch house hunting on funda.nl"
 readme = "README.md"
 license = "MIT"

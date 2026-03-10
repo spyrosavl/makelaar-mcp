@@ -1,7 +1,7 @@
 """Tests for makelaar_mcp.server — written BEFORE implementation (TDD)."""
 
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from funda.listing import Listing
 
 
@@ -43,8 +43,18 @@ def test_search_listings_returns_list():
     assert isinstance(result, list)
     assert len(result) == 1
     row = result[0]
-    for key in ("id", "title", "city", "price", "living_area", "price_per_m2",
-                "bedrooms", "energy_label", "url", "photo_urls"):
+    for key in (
+        "id",
+        "title",
+        "city",
+        "price",
+        "living_area",
+        "price_per_m2",
+        "bedrooms",
+        "energy_label",
+        "url",
+        "photo_urls",
+    ):
         assert key in row, f"Missing key: {key}"
     assert row["price_per_m2"] == 400_000 // 80
     assert row["photo_urls"] == [
@@ -71,7 +81,10 @@ def test_search_listings_uses_search_result_field_names():
 
     row = result[0]
     assert row["id"] == 43362740
-    assert row["url"] == "https://www.funda.nl/detail/koop/amsterdam/huis-teststraat-1/43362740/"
+    assert (
+        row["url"]
+        == "https://www.funda.nl/detail/koop/amsterdam/huis-teststraat-1/43362740/"
+    )
     assert row["publication_date"] == "2024-01-15T10:00:00+01:00"
 
 
@@ -190,10 +203,20 @@ def test_get_price_history_returns_list():
     from makelaar_mcp.server import get_price_history
 
     fake_history = [
-        {"date": "15 jan, 2024", "price": 400_000, "human_price": "€400.000",
-         "status": "asking_price", "source": "Funda"},
-        {"date": "1 mrt, 2023", "price": 380_000, "human_price": "€380.000",
-         "status": "asking_price", "source": "Funda"},
+        {
+            "date": "15 jan, 2024",
+            "price": 400_000,
+            "human_price": "€400.000",
+            "status": "asking_price",
+            "source": "Funda",
+        },
+        {
+            "date": "1 mrt, 2023",
+            "price": 380_000,
+            "human_price": "€380.000",
+            "status": "asking_price",
+            "source": "Funda",
+        },
     ]
     mock_listing = make_listing()
     with patch("makelaar_mcp.server._client") as mock_client:
@@ -227,8 +250,12 @@ def test_compare_listings_returns_comparison():
     """compare_listings fetches multiple listings and returns comparison rows."""
     from makelaar_mcp.server import compare_listings
 
-    listing_a = make_listing(tiny_id="11111111", title="Aastraat 1", price=300_000, living_area=60)
-    listing_b = make_listing(tiny_id="22222222", title="Bbstraat 2", price=500_000, living_area=100)
+    listing_a = make_listing(
+        tiny_id="11111111", title="Aastraat 1", price=300_000, living_area=60
+    )
+    listing_b = make_listing(
+        tiny_id="22222222", title="Bbstraat 2", price=500_000, living_area=100
+    )
 
     with patch("makelaar_mcp.server._client") as mock_client:
         mock_client.get_listing.side_effect = [listing_a, listing_b]
@@ -237,9 +264,20 @@ def test_compare_listings_returns_comparison():
     assert isinstance(result, list)
     assert len(result) == 2
     for row in result:
-        for key in ("tiny_id", "title", "city", "price", "living_area",
-                    "price_per_m2", "bedrooms", "bathrooms", "year_built",
-                    "energy_label", "garden", "url"):
+        for key in (
+            "tiny_id",
+            "title",
+            "city",
+            "price",
+            "living_area",
+            "price_per_m2",
+            "bedrooms",
+            "bathrooms",
+            "year_built",
+            "energy_label",
+            "garden",
+            "url",
+        ):
             assert key in row, f"Missing comparison key: {key}"
 
 
@@ -271,10 +309,17 @@ def test_dutch_mortgage_annuity_basic_keys():
 
     assert isinstance(result, dict)
     for key in (
-        "property_price", "loan_amount", "mortgage_type",
-        "gross_monthly_payment", "monthly_tax_benefit", "net_monthly_payment",
-        "total_paid", "total_interest",
-        "nhg_eligible", "transfer_tax_rate", "transfer_tax_amount",
+        "property_price",
+        "loan_amount",
+        "mortgage_type",
+        "gross_monthly_payment",
+        "monthly_tax_benefit",
+        "net_monthly_payment",
+        "total_paid",
+        "total_interest",
+        "nhg_eligible",
+        "transfer_tax_rate",
+        "transfer_tax_amount",
         "max_mortgage",
     ):
         assert key in result, f"Missing key: {key}"
@@ -457,9 +502,9 @@ def test_dutch_mortgage_student_debt_reduces_max():
 
     assert result_with_debt["max_mortgage"] < result_no_debt["max_mortgage"]
     expected_reduction = 30_000 * 0.0045 * 12 * 30
-    assert result_no_debt["max_mortgage"] - result_with_debt["max_mortgage"] == pytest.approx(
-        expected_reduction, abs=1
-    )
+    assert result_no_debt["max_mortgage"] - result_with_debt[
+        "max_mortgage"
+    ] == pytest.approx(expected_reduction, abs=1)
 
 
 # ---------------------------------------------------------------------------
@@ -474,8 +519,13 @@ def test_total_cost_basic_keys():
     result = calculate_total_cost(purchase_price=400_000)
 
     assert isinstance(result, dict)
-    for key in ("purchase_price", "costs", "total_additional_costs",
-                "total_including_purchase", "cash_needed"):
+    for key in (
+        "purchase_price",
+        "costs",
+        "total_additional_costs",
+        "total_including_purchase",
+        "cash_needed",
+    ):
         assert key in result, f"Missing key: {key}"
     assert isinstance(result["costs"], list)
     assert len(result["costs"]) >= 5  # at least the mandatory costs
@@ -536,11 +586,19 @@ def test_total_cost_with_buyer_agent():
     """Buyer's agent cost is included when requested."""
     from makelaar_mcp.server import calculate_total_cost
 
-    result_without = calculate_total_cost(purchase_price=400_000, include_buyer_agent=False)
+    result_without = calculate_total_cost(
+        purchase_price=400_000, include_buyer_agent=False
+    )
     result_with = calculate_total_cost(purchase_price=400_000, include_buyer_agent=True)
 
-    assert result_with["total_additional_costs"] > result_without["total_additional_costs"]
-    agent = next(c for c in result_with["costs"] if "makelaar" in c["item"].lower() or "agent" in c["item"].lower())
+    assert (
+        result_with["total_additional_costs"] > result_without["total_additional_costs"]
+    )
+    agent = next(
+        c
+        for c in result_with["costs"]
+        if "makelaar" in c["item"].lower() or "agent" in c["item"].lower()
+    )
     assert agent["amount"] == round(400_000 * 0.015)  # 1.5%
 
 
@@ -551,7 +609,10 @@ def test_total_cost_cash_needed_equals_additional():
     result = calculate_total_cost(purchase_price=400_000)
 
     assert result["cash_needed"] == result["total_additional_costs"]
-    assert result["total_including_purchase"] == result["purchase_price"] + result["total_additional_costs"]
+    assert (
+        result["total_including_purchase"]
+        == result["purchase_price"] + result["total_additional_costs"]
+    )
 
 
 def test_dutch_mortgage_error_handling():

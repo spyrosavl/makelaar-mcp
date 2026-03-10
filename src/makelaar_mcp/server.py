@@ -33,10 +33,9 @@ def _trim_listing(listing) -> dict:
     area = listing.get("living_area") or 0
     price_per_m2 = (price // area) if area else None
     raw_photos = listing.get("photos") or []
-    photo_urls = (
-        listing.get("photo_urls")
-        or [_photo_id_to_url(p) for p in raw_photos if isinstance(p, int)]
-    )
+    photo_urls = listing.get("photo_urls") or [
+        _photo_id_to_url(p) for p in raw_photos if isinstance(p, int)
+    ]
     first_photo_url = photo_urls[0] if photo_urls else None
     detail_url = listing.get("url") or listing.get("detail_url") or ""
     if detail_url and not detail_url.startswith("http"):
@@ -51,7 +50,8 @@ def _trim_listing(listing) -> dict:
         "bedrooms": listing.get("bedrooms"),
         "energy_label": listing.get("energy_label"),
         "url": detail_url,
-        "publication_date": listing.get("publication_date") or listing.get("publish_date"),
+        "publication_date": listing.get("publication_date")
+        or listing.get("publish_date"),
         "first_photo_url": first_photo_url,
         "photo_urls": photo_urls,
     }
@@ -130,9 +130,17 @@ def search_listings(
     try:
         # Validate location input
         if not location or (isinstance(location, str) and not location.strip()):
-            return [{"error": "Empty location provided. Please specify a city, neighbourhood, or postcode (e.g. 'amsterdam', 'utrecht', '1012AB')."}]
+            return [
+                {
+                    "error": "Empty location provided. Please specify a city, neighbourhood, or postcode (e.g. 'amsterdam', 'utrecht', '1012AB')."
+                }
+            ]
         if isinstance(location, list) and all(not loc.strip() for loc in location):
-            return [{"error": "All location values are empty. Please specify at least one city, neighbourhood, or postcode."}]
+            return [
+                {
+                    "error": "All location values are empty. Please specify at least one city, neighbourhood, or postcode."
+                }
+            ]
         if isinstance(location, str):
             location = location.lower()
         else:
@@ -184,9 +192,14 @@ def search_listings(
         # Also return a summary line when the list is empty so Claude
         # still gets pagination info and knows to stop.
         if not listings:
-            return [{**search_meta,
-                     "_results_on_this_page": 0, "_has_more": False,
-                     "info": "No results on this page. This is the last page."}]
+            return [
+                {
+                    **search_meta,
+                    "_results_on_this_page": 0,
+                    "_has_more": False,
+                    "info": "No results on this page. This is the last page.",
+                }
+            ]
         return listings
     except Exception as exc:  # noqa: BLE001
         return [{"error": str(exc)}]
@@ -251,8 +264,12 @@ def get_price_history(listing_id: str | int) -> list[dict]:
         listing = _client.get_listing(listing_id)
         history = _client.get_price_history(listing)
         if not history:
-            return [{"info": "No price history available for this listing.",
-                      "entry_count": 0}]
+            return [
+                {
+                    "info": "No price history available for this listing.",
+                    "entry_count": 0,
+                }
+            ]
         # Add entry_count metadata so Claude can report the exact number
         for entry in history:
             entry["_entry_count"] = len(history)
@@ -379,8 +396,7 @@ def calculate_dutch_mortgage(
             final_monthly_payment = principal_monthly + last_month_interest
             # Total interest for linear
             total_interest = sum(
-                (loan_amount - i * principal_monthly) * monthly_rate
-                for i in range(n)
+                (loan_amount - i * principal_monthly) * monthly_rate for i in range(n)
             )
             total_paid = loan_amount + total_interest
         else:
@@ -388,9 +404,11 @@ def calculate_dutch_mortgage(
             if monthly_rate == 0:
                 gross_monthly_payment = loan_amount / n
             else:
-                gross_monthly_payment = loan_amount * (
-                    monthly_rate * (1 + monthly_rate) ** n
-                ) / ((1 + monthly_rate) ** n - 1)
+                gross_monthly_payment = (
+                    loan_amount
+                    * (monthly_rate * (1 + monthly_rate) ** n)
+                    / ((1 + monthly_rate) ** n - 1)
+                )
             final_monthly_payment = gross_monthly_payment  # constant for annuity
             total_paid = gross_monthly_payment * n
             total_interest = total_paid - loan_amount
@@ -469,7 +487,9 @@ def calculate_dutch_mortgage(
             "max_mortgage_details": {
                 "combined_income": combined_income,
                 "base_multiplier": _NIBUD_BASE_MULTIPLIER,
-                "student_debt_monthly_reduction": round(student_debt_monthly_reduction, 2),
+                "student_debt_monthly_reduction": round(
+                    student_debt_monthly_reduction, 2
+                ),
                 "max_borrowable": max_mortgage,
             },
         }
@@ -533,50 +553,68 @@ def calculate_total_cost(
             tax_note = "Primary residence: 2%"
 
         costs = []
-        costs.append({
-            "item": "Overdrachtsbelasting (transfer tax)",
-            "amount": round(purchase_price * tax_rate),
-            "note": tax_note,
-        })
-        costs.append({
-            "item": "Notariskosten (notary fees)",
-            "amount": min(max(round(1_500 + (purchase_price - 200_000) * 0.002), 1_500), 2_500),
-            "note": "Transfer deed + mortgage deed",
-        })
-        costs.append({
-            "item": "Taxatiekosten (appraisal)",
-            "amount": 600,
-            "note": "NWWI-validated, required by lender",
-        })
-        costs.append({
-            "item": "Hypotheekadviseur (mortgage advisor)",
-            "amount": 2_500,
-            "note": "Standard in NL",
-        })
-        costs.append({
-            "item": "Bankgarantie (bank guarantee)",
-            "amount": 500,
-            "note": "Or 10% deposit in escrow",
-        })
-        costs.append({
-            "item": "Kadaster (land registry)",
-            "amount": 150,
-            "note": "Registration fee",
-        })
+        costs.append(
+            {
+                "item": "Overdrachtsbelasting (transfer tax)",
+                "amount": round(purchase_price * tax_rate),
+                "note": tax_note,
+            }
+        )
+        costs.append(
+            {
+                "item": "Notariskosten (notary fees)",
+                "amount": min(
+                    max(round(1_500 + (purchase_price - 200_000) * 0.002), 1_500), 2_500
+                ),
+                "note": "Transfer deed + mortgage deed",
+            }
+        )
+        costs.append(
+            {
+                "item": "Taxatiekosten (appraisal)",
+                "amount": 600,
+                "note": "NWWI-validated, required by lender",
+            }
+        )
+        costs.append(
+            {
+                "item": "Hypotheekadviseur (mortgage advisor)",
+                "amount": 2_500,
+                "note": "Standard in NL",
+            }
+        )
+        costs.append(
+            {
+                "item": "Bankgarantie (bank guarantee)",
+                "amount": 500,
+                "note": "Or 10% deposit in escrow",
+            }
+        )
+        costs.append(
+            {
+                "item": "Kadaster (land registry)",
+                "amount": 150,
+                "note": "Registration fee",
+            }
+        )
 
         # Conditional costs
         if use_nhg:
-            costs.append({
-                "item": "NHG premium",
-                "amount": round(mortgage * _NHG_PREMIUM_RATE),
-                "note": f"0.6% of mortgage (€{mortgage:,})",
-            })
+            costs.append(
+                {
+                    "item": "NHG premium",
+                    "amount": round(mortgage * _NHG_PREMIUM_RATE),
+                    "note": f"0.6% of mortgage (€{mortgage:,})",
+                }
+            )
         if include_buyer_agent:
-            costs.append({
-                "item": "Aankoopmakelaar (buyer's agent)",
-                "amount": round(purchase_price * 0.015),
-                "note": "~1.5% of purchase price",
-            })
+            costs.append(
+                {
+                    "item": "Aankoopmakelaar (buyer's agent)",
+                    "amount": round(purchase_price * 0.015),
+                    "note": "~1.5% of purchase price",
+                }
+            )
 
         total_additional = sum(c["amount"] for c in costs)
 
@@ -603,6 +641,7 @@ def calculate_total_cost(
 
 def main() -> None:
     import sys
+
     transport = "stdio"
     host = "127.0.0.1"
     port = 3000

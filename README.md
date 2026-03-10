@@ -27,16 +27,16 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "makelaar": {
-      "command": "uvx",
+      "command": "FULL_PATH_TO_UVX",
       "args": ["makelaar-mcp"]
     }
   }
 }
 ```
 
-Then restart Claude Desktop.
+Replace `FULL_PATH_TO_UVX` with the output of `which uvx` (e.g. `/Users/you/.local/bin/uvx`). Claude Desktop doesn't inherit your shell PATH, so the full path is required.
 
-No other setup needed — `uvx` handles everything automatically.
+Then restart Claude Desktop.
 
 ---
 
